@@ -55,35 +55,50 @@ const taskStatus = computed(() => {
   }
   // return [...tasksComp];
 });
-if (data.value?.some((task) => task.id == 2)) return;
-
 
 const checkChannel = async () => {
-  // Сначала обновляем данные
-  await refresh();
-
-  // Проверяем, выполнена ли задача с id = 2 (задача по подписке на канал)
+  refresh();
+  
+  // Проверяем, есть ли задача с id 2 (уже подписан)
   if (data.value?.some((task) => task.id == 2)) {
-    return; // Если задача уже выполнена, выходим
+    // Если подписан, просто обновляем данные
+    await refresh();
+    await fetchUser();
+    return;
   }
 
+  // Проверяем флаг в localStorage
+  if (localStorage.getItem(`${localStoagePrefix}checkChannel`) !== "sended") {
+    // Открываем ссылку на канал и устанавливаем флаг
+    $telegramOpenLink("https://t.me/FuturumX100");
+    localStorage.setItem(`${localStoagePrefix}checkChannel`, "sended");
+    return;
+  }
+
+  // Если не подписан, пробуем подписаться через API
   try {
-    // Пытаемся проверить подписку на сервере
-    await axios.post(`${BACK_URL}/task/check-channel`, {
+    const response = await axios.post(`${BACK_URL}/task/check-channel`, {
       user_id: id,
     });
 
-    // Если проверка успешна, обновляем данные
-    await refresh();
-    await fetchUser();
+    // Проверяем ответ от сервера на успешность
+    if (response.data.isSubscribed) {
+      // Если подписан, обновляем данные
+      await refresh();
+      await fetchUser();
+    } else {
+      // Если не подписан, вызываем ошибку
+      throw new Error("User is not subscribed");
+    }
   } catch (e) {
-    // Если подписка не подтверждена, то открываем ссылку на Telegram-канал
+    // Обрабатываем ошибку (например, не подписан)
+    setTasksError([
+      {
+        id: 2,
+        isError: true,
+      },
+    ]);
     $telegramOpenLink("https://t.me/FuturumX100");
-
-    // Сохраняем состояние в localStorage
-    localStorage.setItem(`${localStoagePrefix}checkChannel`, "sended");
-
-    // Показываем сообщение об ошибке
     toast.add({ title: "Вы не подписались на канал!" });
   }
 };
