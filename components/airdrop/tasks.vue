@@ -61,10 +61,26 @@ const checkChannel = async () => {
   
   // Проверяем, есть ли задача с id 2 (уже подписан)
   if (data.value?.some((task) => task.id == 2)) {
-    // Если подписан, просто обновляем данные
+    // Если подписан, считаем задачу выполненной и обновляем данные
     await refresh();
     await fetchUser();
     return;
+  }
+
+  // Проверяем подписан ли пользователь через API до выполнения действий
+  try {
+    const response = await axios.post(`${BACK_URL}/task/check-channel`, {
+      user_id: id,
+    });
+
+    // Если пользователь уже подписан, считаем задачу выполненной
+    if (response.data.isSubscribed) {
+      await refresh();
+      await fetchUser();
+      return;
+    }
+  } catch (e) {
+    console.error("Ошибка проверки подписки через API", e);
   }
 
   // Проверяем флаг в localStorage
@@ -102,6 +118,7 @@ const checkChannel = async () => {
     toast.add({ title: "Вы не подписались на канал!" });
   }
 };
+
 
 
 const checkReg = async () => {
