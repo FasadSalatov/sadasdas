@@ -55,11 +55,17 @@ const taskStatus = computed(() => {
   }
   // return [...tasksComp];
 });
+if (data.value?.some((task) => task.id == 2)) return;
+
 
 const checkChannel = async () => {
   // Сначала обновляем данные
   await refresh();
-
+  if (localStorage.getItem(`${localStoagePrefix}checkChannel`) !== "sended") {
+  $telegramOpenLink("https://t.me/FuturumX100");
+  localStorage.setItem(`${localStoagePrefix}checkChannel`, "sended");
+  return;
+}
   // Проверяем, выполнена ли задача с id = 2 (задача по подписке на канал)
   if (data.value?.some((task) => task.id == 2)) {
     return; // Если задача уже выполнена, выходим
@@ -71,7 +77,7 @@ const checkChannel = async () => {
       user_id: id,
     });
 
-    // Если проверка успешна, обновляем данные и выходим
+    // Если проверка успешна, обновляем данные
     await refresh();
     await fetchUser();
   } catch (e) {
