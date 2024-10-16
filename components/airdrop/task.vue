@@ -56,17 +56,14 @@ defineProps<{
 
 <style lang="sass">
 .tasks
-  position: relative
-  z-index: 12
   &-child
     position: relative
-    z-index: 999123
+
     .modal
       position: absolute
       bottom: 42px
       right: -22px
       pointer-events: none
-      z-index: 999
       width: 280px
     &-disabled
       pointer-events: none
