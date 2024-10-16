@@ -57,40 +57,31 @@ const taskStatus = computed(() => {
 });
 
 const checkChannel = async () => {
-  await refresh(); // Дождаться обновления данных перед проверкой
+  // Сначала обновляем данные
+  await refresh();
 
-  // Проверка, выполнена ли задача с id = 2
+  // Проверяем, выполнена ли задача с id = 2 (задача по подписке на канал)
   if (data.value?.some((task) => task.id == 2)) {
-    return; // Если задача уже выполнена, выход
+    return; // Если задача уже выполнена, выходим
   }
 
-  // Проверка состояния в localStorage
-  if (localStorage.getItem(`${localStoagePrefix}checkChannel`) !== "sended") {
-    $telegramOpenLink("https://t.me/FuturumX100"); // Открыть ссылку
-    localStorage.setItem(`${localStoagePrefix}checkChannel`, "sended"); // Установить метку в localStorage
-    return;
-  }
-
-  // Если localStorage содержит "sended", попробовать выполнить задачу
   try {
+    // Пытаемся проверить подписку на сервере
     await axios.post(`${BACK_URL}/task/check-channel`, {
       user_id: id,
     });
 
-    // После успешного выполнения задачи обновить данные
+    // Если проверка успешна, обновляем данные и выходим
     await refresh();
     await fetchUser();
   } catch (e) {
-    // В случае ошибки отметить задачу как ошибочную
-    setTasksError([
-      {
-        id: 2,
-        isError: true,
-      },
-    ]);
-
-    // Повторное открытие ссылки на канал и уведомление
+    // Если подписка не подтверждена, то открываем ссылку на Telegram-канал
     $telegramOpenLink("https://t.me/FuturumX100");
+
+    // Сохраняем состояние в localStorage
+    localStorage.setItem(`${localStoagePrefix}checkChannel`, "sended");
+
+    // Показываем сообщение об ошибке
     toast.add({ title: "Вы не подписались на канал!" });
   }
 };
