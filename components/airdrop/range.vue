@@ -1,14 +1,40 @@
-
 <script setup lang="ts">
-import { computed } from "vue";
+import axios from "axios";
+import { computed, ref, toRef, watch } from "vue";
+import { BACK_URL } from "~/utils/api/apiConfig";
 import { useUserStore } from "~/store/userStore";
 const { user, setUser } = useUserStore();
 const { $telegramInitData } = useNuxtApp();
 const tasksComp = toRef(useUserStore(), "tasksComp");
-const balance = ref(user?.balance_coin || 0);
-const userBalance = toRef(useUserStore(), "user");
 
-// Вычисляемые свойства для ширины и left
+const userBalance = toRef(useUserStore(), "user");
+const balance = ref(user?.balance_coin || 0);
+
+const counterAnimation = (nextBalance: number) => {
+  let startBalance = balance.value;
+  let interval = 100;
+
+  const animation = () => {
+    if (startBalance < nextBalance) {
+      startBalance++;
+      balance.value = startBalance;
+
+      setTimeout(() => {
+        requestAnimationFrame(animation);
+      }, interval);
+    }
+  };
+  animation();
+};
+
+watch(
+  () => userBalance.value?.balance_coin,
+  (newVal) => {
+    newVal && counterAnimation(newVal);
+  },
+  { immediate: true }
+);
+
 const width = computed(() => {
   if (!tasksComp.value) {
     return "0%";
@@ -26,7 +52,14 @@ const left = computed(() => {
   return Math.min(tasksComp.value.length, maxTasks) * 20 + "%"; // Умножаем на 20% для каждого задания
 });
 
-const value = computed(() => `${tasksComp.value?.length}0,0`);
+try {
+  const id = $telegramInitData?.user?.id;
+  const response = await axios.get(`${BACK_URL}/user/${id}`);
+  setUser(response.data);
+  counterAnimation(response.data.balance_coin);
+} catch (e) {
+  console.error(e);
+}
 </script>
 
 <template>
