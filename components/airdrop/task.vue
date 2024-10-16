@@ -56,13 +56,18 @@ defineProps<{
 
 <style lang="sass">
 .tasks
+  position: relative
+  z-index: 12
   &-child
     position: relative
+    z-index: 999123
     .modal
       position: absolute
       bottom: 42px
-      right: -24px
+      right: -22px
       pointer-events: none
+      z-index: 999
+      width: 280px
     &-disabled
       pointer-events: none
       .tasks-item-title
@@ -99,7 +104,7 @@ defineProps<{
       flex-direction: column
       width: 100%
       margin-left: 16px
-
+      
     &-title
       display: flex
       flex-direction: row
@@ -110,6 +115,7 @@ defineProps<{
         font-weight: bold
 
     &-tool
+      position: relative
       width: 16px
       height: 16px
       background: #046EB5
@@ -118,6 +124,7 @@ defineProps<{
       align-items: center
       justify-content: center
       pointer-events: all
+      z-index: 999
       img
         width: 8px
         height: 8px
