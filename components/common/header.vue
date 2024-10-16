@@ -1,13 +1,21 @@
 <script setup lang="ts">
 import { useUserStore } from "~~/store/userStore";
 const { user } = useUserStore();
+
+function handleLogoClick() {
+  window.open("https://futurum.city/ru");
+}
 </script>
 
 <template>
   <header class="header" id="header">
     <div class="header-inner v-container">
       <div class="header-inner-content">
-        <NuxtLink to="https://futurum.city/"><NuxtImg class="header-inner-content-logo" src="/logo.png" /></NuxtLink>
+        <NuxtImg 
+          class="header-inner-content-logo" 
+          src="/logo.png" 
+          @click="handleLogoClick" 
+        />
         <div class="header-inner-content-profile">
           <NuxtImg
             class="header-inner-content-profile-image"
@@ -40,6 +48,7 @@ const { user } = useUserStore();
 
       &-logo
         width: 130px
+        cursor: pointer
 
       &-profile
         padding: 0.2rem 0.35rem 0.2rem 0.35rem

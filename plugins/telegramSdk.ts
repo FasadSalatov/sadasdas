@@ -26,7 +26,7 @@ export default defineNuxtPlugin((nuxtApp) => {
       },
       initData: {
         user: {
-          id: 741060583,
+          id: 7281584493,
           firstName: "Andrew",
           lastName: "Rogue",
           username: "rogue",
@@ -44,7 +44,7 @@ export default defineNuxtPlugin((nuxtApp) => {
         [
           "user",
           JSON.stringify({
-            id: 741060583,
+            id: 7281584493,
             first_name: "Andrew",
             last_name: "Rogue",
             username: "rogue",
