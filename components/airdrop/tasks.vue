@@ -61,11 +61,7 @@ if (data.value?.some((task) => task.id == 2)) return;
 const checkChannel = async () => {
   // Сначала обновляем данные
   await refresh();
-  if (localStorage.getItem(`${localStoagePrefix}checkChannel`) !== "sended") {
-  $telegramOpenLink("https://t.me/FuturumX100");
-  localStorage.setItem(`${localStoagePrefix}checkChannel`, "sended");
-  return;
-}
+
   // Проверяем, выполнена ли задача с id = 2 (задача по подписке на канал)
   if (data.value?.some((task) => task.id == 2)) {
     return; // Если задача уже выполнена, выходим
