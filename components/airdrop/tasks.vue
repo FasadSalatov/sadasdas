@@ -57,36 +57,40 @@ const taskStatus = computed(() => {
 });
 
 const checkChannel = async () => {
-  await refresh();  // обновить данные о задачах
+  await refresh(); // Дождаться обновления данных перед проверкой
 
   // Проверка, выполнена ли задача с id = 2
   if (data.value?.some((task) => task.id == 2)) {
-    return;  // если задача уже выполнена, ничего не делаем
+    return; // Если задача уже выполнена, выход
   }
 
-  // Проверка состояния localStorage
+  // Проверка состояния в localStorage
   if (localStorage.getItem(`${localStoagePrefix}checkChannel`) !== "sended") {
-    $telegramOpenLink("https://t.me/FuturumX100");  // открытие ссылки на канал
-    localStorage.setItem(`${localStoagePrefix}checkChannel`, "sended");  // сохранение состояния
+    $telegramOpenLink("https://t.me/FuturumX100"); // Открыть ссылку
+    localStorage.setItem(`${localStoagePrefix}checkChannel`, "sended"); // Установить метку в localStorage
     return;
   }
 
-  // Попытка отправить запрос на проверку задачи
+  // Если localStorage содержит "sended", попробовать выполнить задачу
   try {
     await axios.post(`${BACK_URL}/task/check-channel`, {
       user_id: id,
     });
-    await refresh();  // обновление данных о задачах
-    await fetchUser(); // обновление данных о пользователе
+
+    // После успешного выполнения задачи обновить данные
+    await refresh();
+    await fetchUser();
   } catch (e) {
-    // Обработка ошибки и отображение уведомления
+    // В случае ошибки отметить задачу как ошибочную
     setTasksError([
       {
         id: 2,
         isError: true,
       },
     ]);
-    $telegramOpenLink("https://t.me/FuturumX100");  // повторное открытие ссылки при ошибке
+
+    // Повторное открытие ссылки на канал и уведомление
+    $telegramOpenLink("https://t.me/FuturumX100");
     toast.add({ title: "Вы не подписались на канал!" });
   }
 };
