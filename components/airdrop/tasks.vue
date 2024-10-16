@@ -8,7 +8,7 @@ import { BACK_URL, localStoagePrefix } from "~/utils/api/apiConfig";
 
 const { $telegramInitData, $telegramOpenLink, $tonConnectUI } = useNuxtApp();
 const { setTasksComp, setTasksError, setUser } = useUserStore();
-
+const refferals = toRef(useUserStore(), "refferals");
 const tasksComp = toRef(useUserStore(), "tasksComp");
 const user = toRef(useUserStore(), "user");
 const toast = useToast();
@@ -430,16 +430,15 @@ onBeforeUnmount(() => {
 
     <div class="v-container">
       <div class="tasks">
-        <!-- Task 5 -->
         <AirdropTask
-          :click="checkInvite"
-          :toggleTask="() => toggleTask(4)"
-          modalSrc="/image/airdrop/Frame10.png"
-          :showModal="openModalIndex === 4"
-          :isDisabledTask="false"
-          title="Пригласи друга"
-          iconSrc="/icon/friend-icon.svg"
-        />
+  :click="checkInvite"
+  :toggleTask="() => toggleTask(4)"
+  modalSrc="/image/airdrop/Frame10.png"
+  :showModal="openModalIndex === 4"
+  :isDisabledTask="false"
+  :title="refferals?.length == 0 ? 'Пригласи друга' : 'Пригласи следующего'"
+  iconSrc="/icon/friend-icon.svg"
+/>
 
         <!-- Task 6 -->
         <AirdropTask
