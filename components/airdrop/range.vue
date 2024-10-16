@@ -2,8 +2,11 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useUserStore } from "~/store/userStore";
-
+const { user, setUser } = useUserStore();
+const { $telegramInitData } = useNuxtApp();
 const tasksComp = toRef(useUserStore(), "tasksComp");
+const balance = ref(user?.balance_coin || 0);
+const userBalance = toRef(useUserStore(), "user");
 
 // Вычисляемые свойства для ширины и left
 const width = computed(() => {
@@ -30,7 +33,7 @@ const value = computed(() => `${tasksComp.value?.length}0,0`);
   <div v-if="tasksComp" class="wrapper">
     <div class="title">
       Базовые задания
-      <div class="value">{{ value }}</div>
+      <div class="value">{{ balance }}</div>
     </div>
 
     <div class="range">

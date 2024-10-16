@@ -7,7 +7,7 @@ const { user } = useUserStore();
   <header class="header" id="header">
     <div class="header-inner v-container">
       <div class="header-inner-content">
-        <NuxtImg class="header-inner-content-logo" src="/logo.png" />
+        <NuxtLink to="https://futurum.city/"><NuxtImg class="header-inner-content-logo" src="/logo.png" /></NuxtLink>
         <div class="header-inner-content-profile">
           <NuxtImg
             class="header-inner-content-profile-image"
